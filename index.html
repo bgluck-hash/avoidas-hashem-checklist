@@ -128,6 +128,7 @@ h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.
 .name { font-size: 18px; font-weight: 500; transition: color .2s; }
 .amt { font-size: 15px; color: var(--label2); }
 .amt b { color: var(--tint); font-weight: 600; }
+.amt:empty { display: none; }
 .task[aria-checked="true"] .box { background: linear-gradient(135deg, var(--tint-hi), var(--tint-lo)); border-color: var(--tint); }
 .task[aria-checked="true"] .box svg { opacity: 1; transform: scale(1); }
 .task[aria-checked="true"] .name { color: var(--label2); }
@@ -227,9 +228,9 @@ h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.
 
 <script>
 const TASKS = [
-  { id: "shacharis", name: "שחרית", amt: d => "סוף זמן תפילה (גר״א) <b>" + zmanimFor(d).tefillah + "</b>" },
-  { id: "mincha",    name: "מנחה",   amt: d => "לפני השקיעה <b>" + zmanimFor(d).shkia + "</b>" },
-  { id: "maariv",    name: "מעריב",  amt: d => "אחרי צאת הכוכבים <b>" + zmanimFor(d).tzeis + "</b>" },
+  { id: "shacharis", name: "שחרית", amt: () => "" },
+  { id: "mincha",    name: "מנחה",   amt: () => "" },
+  { id: "maariv",    name: "מעריב",  amt: () => "" },
   { id: "mesilas", name: "מסילת ישרים", amt: () => "<b>15 minutes</b>" },
   { id: "gemara",  name: "חזרת גמרא",   amt: () => "<b>20 minutes</b>" },
   { id: "kibud",   name: "כיבוד אב ואם",   amt: d => { const n = kibudLesson(d); return n ? "<b>Lesson " + n + "</b>" : "<b>1 lesson</b> from the sefer"; } },
