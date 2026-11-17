@@ -195,10 +195,10 @@ h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.
             <circle class="trk" cx="38" cy="38" r="30"/>
             <circle class="val" id="fill" cx="38" cy="38" r="30"/>
           </svg>
-          <span class="num" id="ringnum">0</span>
+          <span class="num" id="ringnum">0/7</span>
         </div>
         <div class="stext">
-          <span class="big" id="count">0 of 4 done</span>
+          <span class="big" id="count">0 of 7 done</span>
           <span class="small">Streak: <b id="streak">0</b> <span id="streakword">days</span></span>
         </div>
       </div>
@@ -227,6 +227,9 @@ h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.
 
 <script>
 const TASKS = [
+  { id: "shacharis", name: "שחרית", amt: d => "סוף זמן תפילה (גר״א) <b>" + zmanimFor(d).tefillah + "</b>" },
+  { id: "mincha",    name: "מנחה",   amt: d => "לפני השקיעה <b>" + zmanimFor(d).shkia + "</b>" },
+  { id: "maariv",    name: "מעריב",  amt: d => "אחרי צאת הכוכבים <b>" + zmanimFor(d).tzeis + "</b>" },
   { id: "mesilas", name: "מסילת ישרים", amt: () => "<b>15 minutes</b>" },
   { id: "gemara",  name: "חזרת גמרא",   amt: () => "<b>20 minutes</b>" },
   { id: "kibud",   name: "כיבוד אב ואם",   amt: d => { const n = kibudLesson(d); return n ? "<b>Lesson " + n + "</b>" : "<b>1 lesson</b> from the sefer"; } },
@@ -269,6 +272,12 @@ function sunAt(d, depression, rising) {
 function fmtTime(ms, roundUp) {
   const m = 6e4, t = roundUp ? Math.ceil(ms / m) * m : Math.floor(ms / m) * m;
   return new Date(t).toLocaleTimeString("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" });
+}
+function zmanimFor(d) {
+  try {
+    const sr = sunAt(d, 0.833, true), ss = sunAt(d, 0.833, false);
+    return { tefillah: fmtTime(sr + (ss - sr) / 3, false), shkia: fmtTime(ss, false), tzeis: fmtTime(sunAt(d, 8.5, false), true) };
+  } catch (e) { return { tefillah: "", shkia: "", tzeis: "" }; }
 }
 function renderZmanim(d) {
   const sr = sunAt(d, 0.833, true), ss = sunAt(d, 0.833, false), tz = sunAt(d, 8.5, false);
@@ -349,7 +358,7 @@ function render() {
     const d = addDays(today, -i), dk = key(d), c = doneCount(dk);
     const el = document.createElement("button");
     el.className = "day" + (dk === k ? " sel" : "");
-    el.setAttribute("aria-label", d.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }) + ": " + c + " of 4 done");
+    el.setAttribute("aria-label", d.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }) + ": " + c + " of " + TASKS.length + " done");
     el.innerHTML = '<span>' + d.toLocaleDateString("en-US", { weekday: "short" }) + '</span><span class="dot ' + (c === TASKS.length ? "full" : c ? "part" : "") + '"></span><span class="dn">' + d.getDate() + '</span>';
     el.addEventListener("click", () => { viewDate = d; render(); });
     days.appendChild(el);
